@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIX STORE ✨ | كلشي كتحب فبلاصة وحدة</title>
+<meta name="description" content="MIX STORE - الملابس، الإكسسوارات والإلكترونيات">
+<style>
+:root{--ink:#171717;--gold:#c69b45;--cream:#faf8f3;--muted:#777}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Tahoma,sans-serif;background:var(--cream);color:var(--ink)}
+header{background:#111;color:white;padding:18px 5%;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{font-size:25px;font-weight:900;letter-spacing:1px}.logo span{color:var(--gold)}
+nav{display:flex;gap:14px;flex-wrap:wrap}nav a{color:white;text-decoration:none;font-size:14px}
+.hero{padding:55px 6%;background:linear-gradient(120deg,#171717,#35302a);color:white;text-align:center}
+.hero h1{font-size:clamp(30px,6vw,52px);margin:0 0 12px}.hero h1 span{color:var(--gold)}
+.hero p{color:#eee;font-size:17px}.button{display:inline-block;background:var(--gold);color:#111;padding:12px 22px;border-radius:8px;text-decoration:none;font-weight:bold;border:0;cursor:pointer}
+.wrap{max-width:1150px;margin:auto;padding:28px 18px}
+.categories{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:20px 0 28px}
+.chip{border:1px solid #ddd;background:white;padding:10px 17px;border-radius:22px;cursor:pointer}
+.chip.active{background:#171717;color:white;border-color:#171717}
+h2{text-align:center;margin:12px 0 6px}.sub{text-align:center;color:var(--muted);margin:0 0 20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:17px}
+.card{background:white;border:1px solid #eee;border-radius:13px;overflow:hidden;box-shadow:0 3px 12px #0000000a}
+.photo{height:185px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:55px}
+.cardbody{padding:14px}.card h3{margin:0 0 8px}.desc{font-size:13px;color:var(--muted);min-height:32px}
+.price{font-weight:bold;color:#9b7024;font-size:18px;margin:10px 0}
+.actions{display:flex;gap:8px}.actions button{flex:1}
+.add{background:#171717;color:white;border:0;border-radius:7px;padding:10px;cursor:pointer}
+.cartbox{background:white;border:1px solid #eee;border-radius:12px;padding:18px;margin-top:30px}
+.cartline{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #eee;padding:9px 0}
+.cartline button{border:0;background:none;color:#b22;cursor:pointer}
+input,textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;margin:6px 0 12px;font:inherit}
+footer{text-align:center;background:#111;color:#ddd;padding:25px;margin-top:35px;font-size:14px}
+.note{background:#fff7e6;border:1px solid #f0d9a8;padding:12px;border-radius:8px;font-size:13px;color:#624a1c}
+@media(max-width:600px){header{justify-content:center}nav{justify-content:center}.hero{padding:42px 5%}}
+</style></head>
+<body>
+<header><div class="logo">MIX <span>STORE ✨</span></div><nav><a href="#products" data-ar="المنتجات" data-fr="Produits">المنتجات</a><a href="#cart" data-ar="السلة" data-fr="Panier">السلة</a><a href="#contact" data-ar="تواصل معنا" data-fr="Contact">تواصل معنا</a><button class="chip" style="margin:0" onclick="toggleLang()" id="langBtn">Français</button></nav></header>
+<section class="hero"><h1>مرحبا بك فـ <span>MIX STORE</span> ✨</h1><p>كلشي كتحب، مجموع فبلاصة وحدة!</p><a class="button" href="#products">تسوق دابا</a></section>
+<main class="wrap">
+<h2 id="products">تسوق حسب الأقسام</h2><p class="sub">اختار القسم وشوف المنتجات المتوفرة</p>
+<div class="categories" id="filters"></div><div class="grid" id="productGrid"></div>
+<section class="cartbox" id="cart"><h2>🛒 سلة المشتريات</h2><div id="cartItems">السلة خاوية دابا.</div><p><strong>المجموع: <span id="total">0</span> درهم</strong></p>
+<h3>معلومات التوصيل</h3><input id="customer" placeholder="الاسم الكامل"><input id="phone" placeholder="رقم الهاتف"><input id="city" placeholder="المدينة والعنوان"><textarea id="extra" placeholder="ملاحظات إضافية (اختياري)"></textarea>
+<button class="button" onclick="sendOrder()">أكد الطلب عبر WhatsApp</button>
+<p class="note">ملاحظة: هاد النسخة كتستقبل الطلبات عبر WhatsApp، وما فيهاش أداء إلكتروني بالبطاقة. خاصك تعمري رقم WhatsApp ديالك فالكود قبل النشر.</p>
+</section>
+<section id="contact" class="wrap"><h2>تواصل معنا</h2><p class="sub">مرحبا بأي سؤال أو استفسار على المنتجات.</p></section>
+</main><footer>© <span id="year"></span> MIX STORE ✨ — شكراً على ثقتكم</footer>
+<script>
+// بدّلي الرقم برقم WhatsApp ديالك بصيغة دولية بلا + ولا مسافات، مثال المغرب: 2126XXXXXXXX
+const WHATSAPP_NUMBER = "212634236424";
+// زيدي/بدّلي المنتجات من هنا. الثمن بالدرهم المغربي.
+const products = [
+ {id:1,name:"تيشيرت ستايل",category:"ملابس",price:120,emoji:"👕",desc:"مثال توضيحي — بدّلي الصورة والوصف والثمن."},
+ {id:2,name:"حقيبة أنيقة",category:"إكسسوارات",price:180,emoji:"👜",desc:"مثال توضيحي — منتج قابل للتعديل."},
+ {id:3,name:"ساعة عصرية",category:"إكسسوارات",price:150,emoji:"⌚",desc:"مثال توضيحي — زيدي تفاصيل المنتج."},
+ {id:4,name:"سماعات لاسلكية",category:"إلكترونيات",price:220,emoji:"🎧",desc:"مثال توضيحي — تأكدي من مواصفات المنتج."},
+ {id:5,name:"حذاء رياضي",category:"أحذية",price:250,emoji:"👟",desc:"مثال توضيحي — اختاري المقاسات المتوفرة."},
+ {id:6,name:"ساعة ذكية",category:"إلكترونيات",price:299,emoji:"⌚",desc:"مثال توضيحي — أضيفي معلومات الضمان."}
+];
+let cart=[];let current="الكل";
+const categories=["الكل",...new Set(products.map(p=>p.category))];
+document.getElementById("filters").innerHTML=categories.map(c=>`<button class="chip ${c==="الكل"?"active":""}" onclick="filterProducts('${c}',this)">${c}</button>`).join("");
+function render(){
+ const list=current==="الكل"?products:products.filter(p=>p.category===current);
+ document.getElementById("productGrid").innerHTML=list.map(p=>`<article class="card"><div class="photo">${p.emoji}</div><div class="cardbody"><h3>${p.name}</h3><div class="desc">${p.desc}</div><div class="price">${p.price} درهم</div><div class="actions"><button class="add" onclick="addToCart(${p.id})">زيد للسلة</button></div></div></article>`).join("");
+ renderCart();
+}
+function filterProducts(c,el){current=c;document.querySelectorAll(".chip").forEach(x=>x.classList.remove("active"));el.classList.add("active");render()}
+function addToCart(id){let p=products.find(x=>x.id===id),line=cart.find(x=>x.id===id);line?line.qty++:cart.push({...p,qty:1});renderCart()}
+function renderCart(){
+ let box=document.getElementById("cartItems");
+ box.innerHTML=cart.length?cart.map(p=>`<div class="cartline"><span>${p.name} × ${p.qty}</span><span>${p.price*p.qty} درهم <button onclick="removeItem(${p.id})">حذف</button></span></div>`).join(""):"السلة خاوية دابا.";
+ document.getElementById("total").textContent=cart.reduce((s,p)=>s+p.price*p.qty,0);
+}
+function removeItem(id){cart=cart.filter(p=>p.id!==id);renderCart()}
+function sendOrder(){
+ if(!cart.length){alert("زيد شي منتج للسلة الأول.");return}
+ const name=document.getElementById("customer").value.trim(),phone=document.getElementById("phone").value.trim(),city=document.getElementById("city").value.trim();
+ if(!name||!phone||!city){alert("عمر الاسم ورقم الهاتف والعنوان.");return}
+ let lines=cart.map(p=>`- ${p.name} × ${p.qty}: ${p.price*p.qty} درهم`).join("%0A");
+ let msg=`طلب جديد من MIX STORE%0Aالاسم: ${encodeURIComponent(name)}%0Aالهاتف: ${encodeURIComponent(phone)}%0Aالعنوان: ${encodeURIComponent(city)}%0Aالمنتجات:%0A${lines}%0Aالمجموع: ${document.getElementById("total").textContent} درهم%0Aملاحظات: ${encodeURIComponent(document.getElementById("extra").value)}`;
+ window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`,"_blank");
+}
+let lang="ar";
+function toggleLang(){
+ lang=lang==="ar"?"fr":"ar";
+ document.documentElement.lang=lang;document.documentElement.dir=lang==="ar"?"rtl":"ltr";
+ document.getElementById("langBtn").textContent=lang==="ar"?"Français":"العربية";
+ const dict={
+  "مرحبا بك فـ MIX STORE ✨":"Bienvenue chez MIX STORE ✨",
+  "كلشي كتحب، مجموع فبلاصة وحدة!":"Tout ce que vous aimez, au même endroit !",
+  "تسوق دابا":"Acheter maintenant","تسوق حسب الأقسام":"Acheter par catégorie",
+  "اختار القسم وشوف المنتجات المتوفرة":"Choisissez une catégorie et découvrez les produits",
+  "سلة المشتريات":"Panier","السلة خاوية دابا.":"Votre panier est vide.",
+  "المجموع:":"Total :","معلومات التوصيل":"Informations de livraison",
+  "أكد الطلب عبر WhatsApp":"Commander via WhatsApp",
+  "تواصل معنا":"Contactez-nous","مرحبا بأي سؤال أو استفسار على المنتجات.":"Une question sur un produit ? Contactez-nous.",
+  "زيد للسلة":"Ajouter au panier","حذف":"Supprimer","الكل":"Tout",
+  "ملابس":"Vêtements","إكسسوارات":"Accessoires","إلكترونيات":"Électronique","أحذية":"Chaussures"
+ };
+ document.querySelectorAll("[data-ar]").forEach(el=>el.textContent=lang==="ar"?el.dataset.ar:el.dataset.fr);
+ document.querySelectorAll("h1,h2,h3,p,a,button").forEach(el=>{
+   const t=el.textContent.trim();if(dict[t])el.textContent=dict[t];
+ });
+ document.getElementById("customer").placeholder=lang==="ar"?"الاسم الكامل":"Nom complet";
+ document.getElementById("phone").placeholder=lang==="ar"?"رقم الهاتف":"Téléphone";
+ document.getElementById("city").placeholder=lang==="ar"?"المدينة والعنوان":"Ville et adresse";
+ document.getElementById("extra").placeholder=lang==="ar"?"ملاحظات إضافية (اختياري)":"Remarques (facultatif)";
+}
+document.getElementById("year").textContent=new Date().getFullYear();render();
+</script></body></html>
